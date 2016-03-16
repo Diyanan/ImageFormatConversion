@@ -17,7 +17,7 @@ std::vector<std::string> ImageFormatConversion::getFileList( std::string foldnam
 	file = FindFirstFile( fn, &fileData );
 	FindNextFile( file, &fileData );
 	while(FindNextFile( file, &fileData ))
-    {
+       {
 		wcstombs( line, (const wchar_t*)fileData.cFileName, 259);
 		lineStr = line;
         // remove the files which are not images
