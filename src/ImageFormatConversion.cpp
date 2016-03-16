@@ -99,7 +99,7 @@ void ImageFormatConversion::imageU162U8( std::string input_folder, FilterMode mo
 				{
 					for ( int i=0; i<rows*cols; ++i )
 					{
-						int pValue = static_cast<int>(data_cur[i] & 0xffff);
+						int pValue = static_cast<int>(*++data_cur & 0xffff);
 						data_trans[i] = static_cast<uchar>(pValue);
 					}
 
