@@ -9,6 +9,7 @@ ADD_DEFINITIONS(-DUNICODE)
 
 SET(PROGRAM_TARGETS
 ImageConversionTest
+BlackImageFilterTest
 )
 
 INCLUDE_DIRECTORIES(.)

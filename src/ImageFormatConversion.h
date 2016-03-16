@@ -18,6 +18,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include <direct.h> 
+#include <omp.h>
 
 #include "cv.h"
 #include "highgui.h"
@@ -41,8 +42,8 @@ public:
 public:
 	static std::vector<std::string> getFileList( std::string foldname );
 	
-// 	static void blackImageFilter( std::vector<std::string>& file_list, 
-// 		std::vector<std::string>& filtered_list );
+ 	static void blackImageFilter( std::string input_folder );
+
 	static void imageU162U8( std::string input_folder, FilterMode mode = SAVE_BLACK );
 
 //	static bool imageU16Read( std::string file_name, cv::Mat& trans_image );

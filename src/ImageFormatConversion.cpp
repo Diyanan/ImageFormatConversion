@@ -1,6 +1,6 @@
-#include "BlackImageFiltering.h"
+#include "ImageFormatConversion.h"
 
-std::vector<std::string> BlackImageFilter::getFileList( std::string foldname )
+std::vector<std::string> ImageFormatConversion::getFileList( std::string foldname )
 {
 	std::string filename = foldname + "/*.*";
 	const char* mystr=filename.c_str();
@@ -33,13 +33,7 @@ std::vector<std::string> BlackImageFilter::getFileList( std::string foldname )
 	return flist;
 }
 
-//void BlackImageFilter::blackImageFilter( std::vector<std::string>& file_list, 
-//	std::vector<std::string>& filtered_list )
-//{
-//
-//}
-
-void BlackImageFilter::imageU162U8( std::string input_folder, FilterMode mode/*= SAVE_BLACK*/ )
+void ImageFormatConversion::imageU162U8( std::string input_folder, FilterMode mode/*= SAVE_BLACK*/ )
 {
 	std::vector<std::string> file_list = getFileList(input_folder);
 
@@ -54,6 +48,7 @@ void BlackImageFilter::imageU162U8( std::string input_folder, FilterMode mode/*=
 	saveFolder += "/trans_folder";
 	_mkdir(saveFolder.c_str());
 
+#pragma omp parallel for
 	for ( int idx=0; idx<size_list; idx++ )
 	{
 		std::string curFile = input_folder;
@@ -68,7 +63,10 @@ void BlackImageFilter::imageU162U8( std::string input_folder, FilterMode mode/*=
 		}
 		else
 		{
+
+#if 0
 			std::cout << idx << " Image " << curFileName << " read succeed!" << std::endl;
+#endif
 
 			const int cols = curImage.cols;
 			const int rows = curImage.rows;
@@ -115,6 +113,60 @@ void BlackImageFilter::imageU162U8( std::string input_folder, FilterMode mode/*=
 				{
 					std::cout << idx << " Black image!" << std::endl;
 				}
+			}
+		}
+	}
+}
+
+void ImageFormatConversion::blackImageFilter( std::string input_folder )
+{
+	std::vector<std::string> file_list = getFileList(input_folder);
+
+	const int size_list = file_list.size();
+	if ( !size_list )
+	{
+		std::cout << "No image loaded!" << std::endl;
+		return;
+	}
+
+	std::string saveFolder = input_folder;
+	saveFolder += "/trans_folder";
+	_mkdir(saveFolder.c_str());
+
+#pragma omp parallel for
+	for ( int idx=0; idx<size_list; idx++ )
+	{
+		std::string curFile = input_folder;
+		std::string curFileName = file_list[idx];
+		curFile += "/" + curFileName;
+
+		cv::Mat curImage = cv::imread(curFile, IMREAD_UNCHANGED);
+
+		if (!curImage.data)
+		{
+			std::cout << idx << " Image " << curFileName << " read failed!" << std::endl;
+		}
+		else
+		{
+
+#if 0
+			std::cout << idx << " Image " << curFileName << " read succeed!" << std::endl;
+#endif
+
+			const int cols = curImage.cols;
+			const int rows = curImage.rows;
+
+			double pMax = 0, pMin = 0;
+			cv::minMaxIdx(curImage, &pMin, &pMax);
+			int ipMin = pMin, pRange = pMax - pMin;
+
+			if ( pRange > 0 )
+			{
+				std::string saveFileName = saveFolder;
+				saveFileName += "/" + curFileName;
+//				saveFileName += ".jpg";
+
+				cv::imwrite(saveFileName, curImage);
 			}
 		}
 	}
