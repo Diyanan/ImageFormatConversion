@@ -21,7 +21,7 @@ std::vector<std::string> ImageFormatConversion::getFileList( std::string foldnam
 		wcstombs( line, (const wchar_t*)fileData.cFileName, 259);
 		lineStr = line;
         // remove the files which are not images
-		for (int i = 0; i < 4; i ++)
+		for (int i = 0; i < extendName.size(); i ++)
 		{
 			if (lineStr.find(extendName[i]) < 999)
 			{
